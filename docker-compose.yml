@@ -1,0 +1,41 @@
+version: '3'
+services:
+  jenkins:
+    container_name: jenkins
+    image: 'jenkins/jenkins:lts-jdk11'
+    ports:
+      - "8081:8080"
+    volumes:
+      - jenkis_volume:/var/jenkins_home:rw
+    networks:
+      - jenkins_net
+    restart: always
+  adminer:
+    container_name: adminer
+    image: adminer
+    environment:
+      - ADMINER_DEFAULT_SERVER=mysql
+    restart: always
+    networks:
+      - jenkins_net
+    ports:
+      - 8082:8080
+  db:
+    container_name: mysql
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    networks:
+      - jenkins_net
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=root
+    restart: always
+    volumes:
+        - mysql_volume:/var/lib/mysql:rw 
+
+volumes:
+  jenkis_volume:
+  mysql_volume:
+networks:
+  jenkins_net:
